@@ -4,9 +4,9 @@ As part of our application process, we'd like to see what you can produce by giv
 
 ## The assignment
 
-![](assets/create-invoice.png)
+![](test/create-invoice.png)
 
-![](assets/list-invoice.png)
+![](test/list-invoice.png)
 
 We would like you to create an invoicing app. The features it should include:
 
