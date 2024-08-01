@@ -3,10 +3,9 @@ import {invoiceSlice} from "../slice/invoiceSlice";
 
 export const store = configureStore({
     reducer: {
-// @ts-ignore
-        invoice: invoiceSlice
-    },
-})
+        invoice: invoiceSlice.reducer
+    }
+});
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>

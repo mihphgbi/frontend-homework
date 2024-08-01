@@ -1,9 +1,15 @@
 import React from "react";
 
-const Header : React.FC<{title:string}> = ({title}) => {
-    return(
+type HeaderProps = {
+    title: string
+}
+
+const Header: React.FC<HeaderProps> = ({title}) => {
+    return (
         <>
-            <p>{title}</p>
+            <div style={{minHeight: '70px', backgroundColor: "white", color: 'var(--dark-blue-color)'}}>
+                <p>{title}</p>
+            </div>
         </>
     )
 }
