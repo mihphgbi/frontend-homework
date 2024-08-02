@@ -11,14 +11,12 @@ module.exports = {
             "black-color": "var(--black-color)",
             "dark-blue-color": "var(--dark-blue-color)",
             "blue-color": "var(--blue-color)",
+            "light-blue-color": "var(--light-blue-color)",
             "gray-color": "var(--gray-color)",
             "light-yellow-color": "var(--light-yellow-color)",
             "light-green-color": "var(--light-green-color)",
             "light-pink-color": "var(--light-pink-color)",
         },
-        backgroundColor: {
-          'blue-gradient': "var(--primary-gradient)"
-        }
     },
     plugins: [],
 }

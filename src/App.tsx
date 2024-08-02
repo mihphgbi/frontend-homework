@@ -3,7 +3,7 @@ import {store} from "./redux/store/store";
 import {Provider} from "react-redux";
 import AppRoute from "./route/app-route";
 import Loader from "./components/loading/loading";
-import './App.css';
+import {BrowserRouter} from "react-router-dom";
 
 //can customize multi theme here
 function App() {
@@ -11,7 +11,9 @@ function App() {
         <>
             <Provider store={store}>
                 <Suspense fallback={<Loader/>}>
-                    <AppRoute/>
+                    <BrowserRouter>
+                        <AppRoute/>
+                    </BrowserRouter>
                 </Suspense>
             </Provider>
         </>

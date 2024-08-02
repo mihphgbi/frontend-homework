@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import {invoiceSlice} from "../slice/invoiceSlice";
+import {layoutSlice} from "../slice/layoutSlice";
 
 export const store = configureStore({
     reducer: {
-        invoice: invoiceSlice.reducer
+        layout: layoutSlice.reducer,
+        invoice: invoiceSlice.reducer,
     }
 });
 
