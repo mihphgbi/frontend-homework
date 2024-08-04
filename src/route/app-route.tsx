@@ -2,7 +2,7 @@ import React from "react";
 import {Route, Routes, useLocation} from "react-router-dom";
 import {routes} from "./routes";
 import {IRoute} from "../models/route/route.model";
-import PageNotFound from "../pages/error/not-found";
+import PageNotFound from "../pages/system-pages/error/not-found";
 import MainLayout from "../layout/layout";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 

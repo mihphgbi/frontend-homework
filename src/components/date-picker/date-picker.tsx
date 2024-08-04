@@ -1,8 +1,7 @@
 import React from "react";
-import {Input} from 'antd';
-import './input.scss';
+import {DatePicker} from 'antd';
 
-interface InputProps {
+interface DatePickerProps {
     placeholder?: string
     onChange?: () => void
     disabled?: boolean
@@ -10,16 +9,16 @@ interface InputProps {
 
 }
 
-const InputControl: React.FC<InputProps> = ({...props}) => {
+const DatePickerControl: React.FC<DatePickerProps> = ({...props}) => {
     const {width = '20rem'} = props;
 
     return (
         <>
-            <Input style={{minWidth: '10rem', width: width}}
+            <DatePicker style={{minWidth: '10rem', width: width}}
                    className={`bg-gray-color border-none`}
                    {...props}
             />
         </>
     )
 }
-export default InputControl
+export default DatePickerControl

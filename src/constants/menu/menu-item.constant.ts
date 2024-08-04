@@ -1,6 +1,7 @@
 export const MENU_ITEM = {
     HOME: 'home',
-    INVOICE: 'invoice',
+    INVOICE_LIST: 'invoice',
+    CREATE_INVOICE: 'create-invoice',
     EDIT_INVOICE: 'edit-invoice',
     CONTRACTORS: 'contractors',
     SERVICES: 'services',

@@ -1,22 +1,79 @@
 import {IRoute} from '../models/route/route.model';
 import React from 'react';
+import HelpIndexPage from "../pages/features/help/help-page";
+import SettingIndexPage from "../pages/features/settings/setting";
+import StatisticsIndexPage from "../pages/others/statistics/statistics-index";
 // Lazy load the components
-const CreateInvoice = React.lazy(() => import('../pages/invoice/create-invoice/create-invoice'));
-const HomePage = React.lazy(() => import('../pages/home/home'));
+const InvoiceListPage = React.lazy(() => import('../pages/recents/invoice/invoice-list/invoice-list'));
+const CreateInvoice = React.lazy(() => import('../pages/recents/invoice/create-invoice/create-invoice'));
+const HomePage = React.lazy(() => import('../pages/recents/home/home'));
+const UsersIndexPage = React.lazy(() => import('../pages/others/users/users-index'));
+const ContractorsIndexPage = React.lazy(() => import('../pages/recents/contractors/contractors-index'));
+const ProductAndServicesIndexPage = React.lazy(() => import('../pages/recents/products-and-serivces/products-and-services'));
 
 export const routes: Array<IRoute> = [
     {
-        key: 'create-invoice-route',
-        title: 'New document',
+        key: 'home-route',
+        title: 'Home',
         path: '/',
         enabled: true,
         component: HomePage
     },
     {
+        key: 'invoice-list',
+        title: 'Invoice list',
+        path: '/invoice',
+        enabled: true,
+        component: InvoiceListPage
+    },
+    {
         key: 'create-invoice-route',
         title: 'New document',
-        path: '/invoice',
+        path: '/create-invoice',
         enabled: true,
         component: CreateInvoice
     },
+    {
+        key: 'help',
+        title: 'Help',
+        path: '/help',
+        enabled: true,
+        component: HelpIndexPage
+    },
+    {
+        key: 'setting',
+        title: 'Setting',
+        path: '/setting',
+        enabled: true,
+        component: SettingIndexPage
+    },
+    {
+        key: 'statistics',
+        title: 'Statistics',
+        path: '/statistics',
+        enabled: true,
+        component: StatisticsIndexPage
+    },
+    {
+        key: 'Users',
+        title: 'Users',
+        path: '/users',
+        enabled: true,
+        component: UsersIndexPage
+    },
+    {
+        key: 'contractors',
+        title: 'Contractors',
+        path: '/contractors',
+        enabled: true,
+        component: ContractorsIndexPage
+    },
+    {
+        key: 'products-and-services',
+        title: 'Products and services',
+        path: '/products-and-services',
+        enabled: true,
+        component: ProductAndServicesIndexPage
+    },
+
 ];
