@@ -1,23 +1,17 @@
 import React from "react";
-import {Select} from 'antd';
-import {LabeledValue} from "antd/es/select";
+import {Select,SelectProps} from 'antd';
 import './select.style.scss';
 
-type SelectProps = {
-    placeholder?: string
-    options: Array<{ value: string | number, label: string | number }>
-    onChange?: () => void
-    disable?: boolean
-    autoFocus?: boolean
-    defaultValue?: string | string[] | number | number[] | LabeledValue | LabeledValue[]
+interface SelectControlProps extends SelectProps{
     width?: string
+    height?: string
 }
-const SelectControl: React.FC<SelectProps> = ({...props}) => {
-    const {width = '20rem'} = props;
+const SelectControl: React.FC<SelectControlProps> = ({...props}) => {
+    const {width = '100%', height='2.125rem'} = props;
 
     return (
         <>
-            <Select style={{minWidth: '10rem', width: width, background: 'var(--gray-color)'}}
+            <Select style={{minWidth: '10rem', width: width, height:height}}
                     className={`bg-gray-color`}
                     {...props}
             />

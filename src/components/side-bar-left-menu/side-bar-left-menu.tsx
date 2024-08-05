@@ -103,6 +103,7 @@ const SideBarLeftMenu: React.FC<SideBarLeftMenuProps> = () => {
                         }}
                         theme="light"
                         selectedKeys={[selectedKey]}
+                        defaultOpenKeys={[MAIN_MENU_ITEM.INVOICES]}
                         mode="inline"
                         items={menuItems}
                         onClick={handleChangeKey}

@@ -2,41 +2,23 @@ import React, {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {activeMenu, openWarningAlert} from "../../../../redux/slice/layoutSlice";
 import {MENU_ITEM} from "../../../../constants/menu/menu-item.constant";
-import {Button, Flex, Table, TableColumnsType} from "antd";
+import {Col, Flex, Form, FormProps, Row, Table} from "antd";
 import InputControl from "../../../../components/input/input";
 import SelectControl from "../../../../components/select/select";
-import {PAYMENT_METHOD_LIST} from "../../../../constants/invoice/invoice.constant";
-import {data} from "../../../../mock-data/invoice";
+import {
+    BANK_ACCOUNT_OPTION,
+    CONTRACTOR_LIST,
+    data, DOCUMENT_TYPE_LIST, FORMAT_LIST,
+    PAYMENT_METHOD_LIST,
+    PREPARE_OPTION
+} from "../../../../mock-data/invoice";
 import DatePickerControl from "../../../../components/date-picker/date-picker";
-import {ItemInvoiceModel} from "../../../../models/invoice/invoice.model";
-import OutlinedButtonControl from "../../../../components/button/outlined-button";
-import GradientButtonControl from "../../../../components/button/gradient-button";
+import {columns, InvoiceModel, ItemInvoiceModel} from "../../../../models/invoice/invoice.model";
+import ButtonControl from "../../../../components/button/button";
+import {createInvoiceItem} from "../../../../redux/actions/invoice/invoice.action";
+import {AppDispatch} from "../../../../redux/store/store";
 
-
-export const columns: TableColumnsType<ItemInvoiceModel> = [
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        render: (text: string) => <a>{text}</a>,
-    },
-    {
-        title: 'Quantity',
-        dataIndex: 'quantity',
-    },
-    {
-        title: 'Unit',
-        dataIndex: 'unit',
-    }, {
-        title: 'Unit Price',
-        dataIndex: 'unitPrice',
-    }, {
-        title: 'Calculated Price',
-        dataIndex: 'calculatedPrice',
-        render: (_, record) => (
-            record.unitPrice * record.quantity
-        )
-    }
-];
+const {Item} = Form;
 
 // rowSelection object indicates the need for row selection
 const rowSelection = {
@@ -49,112 +31,217 @@ const rowSelection = {
     }),
 };
 
+const initInvoiceData: InvoiceModel = {
+    id: '',
+    name: '',
+    invoiceDate: '',
+    dueDate: '',
+    payment: '',
+    contractor: '',
+    format: '',
+    createDate: '',
+    updateDate: '',
+    bankAccount: '',
+    prepare: '',
+    documentType: ''
+}
+
 type CreateInvoiceProps = {}
 const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
-    const dispatch = useDispatch();
-    const [listData, setListData] = useState(data)
+    const dispatch = useDispatch<AppDispatch>();
+    const [listData, setListData] = useState<ItemInvoiceModel[]>(data)
+    const [invoiceData, setInvoiceData] = useState<InvoiceModel>(initInvoiceData)
 
 
     useEffect(() => {
         dispatch(activeMenu(MENU_ITEM.CREATE_INVOICE))
     }, [dispatch])
 
+    const handleSaveAsDraft = () => {
+        dispatch(openWarningAlert({isOpenAlert: true, msgAlert: 'This feature is developing'}))
+    }
+
+
+    const handleChangeInput = (value: string | number, name: string) => {
+        setInvoiceData({...invoiceData, [name]: value})
+        return;
+    }
+
+    const onFinish: FormProps<InvoiceModel>['onFinish'] =  (values) => {
+        dispatch(createInvoiceItem({values: values}));
+    };
+
+    const onFinishFailed: FormProps<InvoiceModel>['onFinishFailed'] = (errorInfo) => {};
+
     const handleAddItem = () => {
         const newItem: ItemInvoiceModel = {
-            key: '',
+            id: '',
             name: '',
             quantity: 0,
             unit: '',
             unitPrice: 0,
         }
-        // @ts-ignore
-        setListData([...listData,newItem]);
+        setListData([...listData, newItem]);
     }
 
     return (
-
         <div className={'relative min-h-[100%] pb-20'}>
-            <Flex gap={'1rem'} justify={'space-between'} vertical>
-                <Flex vertical gap={'0.5rem'} className={'bg-white-color rounded-2xl p-8'}>
-                    <Flex gap={'middle'} justify={'space-between'}>
-                        <InputControl disabled={false}
-                                      placeholder={'Document Number'}
-                        />
-                        <SelectControl placeholder={'Document Type'}
-                                       options={[{value: 1, label: 1}, {value: 2, label: 2}]}
-                        />
-                        <SelectControl placeholder={'Prepare'}
-                                       options={[{value: 1, label: 1}, {value: 2, label: 2}]}
-                        />
+            <Form onFinish={onFinish}
+                  onFinishFailed={onFinishFailed}>
+                <Flex gap={'0.5rem'} justify={'space-between'} vertical>
+                    <Flex vertical gap={'0.5rem'} className={'bg-white-color rounded-2xl p-8'}>
+                        <Row gutter={24}>
+                            <Col className="gutter-row" span={8}>
+                                <Item<InvoiceModel> name={'name'}
+                                                    rules={[{required: true, message: 'Please input document number'}]}>
+                                    <InputControl placeholder={'Document Number'}
+                                                  value={invoiceData.name}
+                                                  onChange={(event) => handleChangeInput(event.target.value, 'name')}
+                                    />
+                                </Item>
+                            </Col>
+                            <Col className="gutter-row" span={8}>
+                                <Item<InvoiceModel> name={'documentType'}
+                                                    rules={[{required: true, message: 'Please select document type'}]}>
+                                    <SelectControl placeholder={'Document Type'}
+                                                   onChange={(value) => handleChangeInput(value, 'documentType')}
+                                                   value={invoiceData.documentType}
+                                                   options={DOCUMENT_TYPE_LIST}
+                                    />
+                                </Item>
+                            </Col>
+                            <Col className="gutter-row" span={8}>
+                                <Item<InvoiceModel> name={'prepare'}
+                                                    rules={[{
+                                                        required: true,
+                                                        message: 'Please select prepared option'
+                                                    }]}>
+                                    <SelectControl placeholder={'Prepared'}
+                                                   value={invoiceData.prepare}
+                                                   onChange={(value) => handleChangeInput(value, 'prepare')}
+                                                   options={PREPARE_OPTION}
+                                    />
+                                </Item>
+                            </Col>
+                        </Row>
+
+                        <Row gutter={24}>
+                            <Col className="gutter-row" span={8}>
+                                <Item<InvoiceModel> name={'contractor'}
+                                                    rules={[{
+                                                        required: true,
+                                                        message: 'Please select contractor option'
+                                                    }]}>
+                                    <SelectControl placeholder={'Contractor'}
+                                                   value={invoiceData.contractor}
+                                                   onChange={(value) => handleChangeInput(value, 'contractor')}
+                                                   options={CONTRACTOR_LIST}
+                                    />
+                                </Item>
+                            </Col>
+                            <Col className="gutter-row" span={8}>
+                                <Item<InvoiceModel> name={'format'}
+                                                    rules={[{
+                                                        required: true,
+                                                        message: 'Please select format option'
+                                                    }]}>
+                                    <SelectControl placeholder={'Format'}
+                                                   value={invoiceData.format}
+                                                   onChange={(value) => handleChangeInput(value, 'format')}
+                                                   options={FORMAT_LIST}
+                                    />
+                                </Item>
+                            </Col>
+                            <Col className="gutter-row" span={8}>
+                                <Item<InvoiceModel> name={'bankAccount'}
+                                                    rules={[{
+                                                        required: true,
+                                                        message: 'Please select an account'
+                                                    }]}>
+                                    <SelectControl placeholder={'Bank account'}
+                                                   value={invoiceData.bankAccount}
+                                                   onChange={(value) => handleChangeInput(value, 'bankAccount')}
+                                                   options={BANK_ACCOUNT_OPTION}
+                                    />
+                                </Item>
+                            </Col>
+                        </Row>
+
+                        <Row gutter={24}>
+                            <Col className="gutter-row" span={8}>
+                                <Item<InvoiceModel> name={'invoiceDate'}
+                                                    rules={[{
+                                                        required: true,
+                                                        message: 'Please select a date'
+                                                    }]}>
+                                    <DatePickerControl placeholder={'Invoice date'}
+                                    />
+                                </Item>
+                            </Col>
+                            <Col className="gutter-row" span={8}>
+                                <Item<InvoiceModel> name={'dueDate'}
+                                                    rules={[{
+                                                        required: true,
+                                                        message: 'Please select a date'
+                                                    }]}>
+                                    <DatePickerControl placeholder={'Due date'}/>
+                                </Item>
+                            </Col>
+                            <Col className="gutter-row" span={8}>
+                                <Item<InvoiceModel> name={'payment'}
+                                                    rules={[{
+                                                        required: true,
+                                                        message: 'Please select a payment method'
+                                                    }]}>
+                                    <SelectControl placeholder={'Payment'}
+                                                   value={invoiceData.payment}
+                                                   options={PAYMENT_METHOD_LIST}
+                                                   onChange={(value) => handleChangeInput(value, 'payment')}
+                                    />
+                                </Item>
+                            </Col>
+                        </Row>
                     </Flex>
-                    <Flex gap={'middle'} justify={'space-between'}>
-                        <SelectControl placeholder={'Contractor'}
-                                       options={[{value: 1, label: 1}, {value: 2, label: 2}]}
-                        />
-                        <SelectControl placeholder={'Format'}
-                                       options={[{value: 1, label: 1}, {value: 2, label: 2}]}
-                        />
-                        <SelectControl placeholder={'Bank account'}
-                                       options={[{value: 1, label: 1}, {value: 2, label: 2}]}
-                        />
-                    </Flex>
-                    <Flex gap={'middle'} justify={'space-between'}>
-                        <DatePickerControl placeholder={'Invoice date'}/>
-                        <DatePickerControl placeholder={'Due date'}/>
-                        <SelectControl placeholder={'Payment'}
-                                       options={PAYMENT_METHOD_LIST}
-                        />
-                    </Flex>
-                </Flex>
-                <Flex vertical gap={'middle'} className={'bg-white-color rounded-2xl p-8'}>
-                    <Flex gap={'middle'}>
-                        <div>
-                            <OutlinedButtonControl text={'Add more item'} onClick={handleAddItem}/>
+                    <Flex vertical gap={'middle'} className={'bg-white-color rounded-2xl p-3'}>
+                        <Flex gap={'middle'} justify={'flex-end'} className={'pr-4'}>
+                            <div>
+                                <ButtonControl text={'Add more item'} onClick={handleAddItem}/>
+                            </div>
+                        </Flex>
+                        <div className={'w-[100%]'}>
+                            <Table
+                                rowKey={'id'}
+                                rowSelection={{
+                                    ...rowSelection,
+                                }}
+                                columns={columns}
+                                dataSource={listData}
+                                pagination={false}
+                            />
                         </div>
                     </Flex>
-                    <div className={'w-[100%]'}>
-                        <Table
-                            rowSelection={{
-                                ...rowSelection,
-                            }}
-                            columns={columns}
-                            dataSource={listData}
-                            pagination={false}
-                        />
-                    </div>
                 </Flex>
-            </Flex>
-            <CreateInvoiceActionGroup/>
+                <div className={'w-[100%] p-4 absolute bottom-0 bg-white-color shadow-lg rounded-2xl'}>
+                    <Flex gap={'middle'} justify={'space-between'}>
+                        <Flex gap={'middle'}>
+                            Tax
+                        </Flex>
+                        <Flex gap={'middle'}>
+                            <div>
+                                <ButtonControl btnType={'gradient-btn'} text={'Save'} htmlType={'submit'}/>
+                            </div>
+                            <div>
+                                <ButtonControl text={'Save as draft'} onClick={handleSaveAsDraft}/>
+                            </div>
+                            <div>
+                                <ButtonControl btnType={'no-outline-btn'} text={'Cancel'} onClick={() => {
+                                }}/>
+                            </div>
+                        </Flex>
+                    </Flex>
+                </div>
+            </Form>
         </div>
     )
 }
 export default CreateInvoice
-
-const CreateInvoiceActionGroup = () => {
-    const dispatch = useDispatch();
-
-    const handleSaveAsDraft = () => {
-        dispatch(openWarningAlert({isOpenWarningAlert: true, msgAlert: 'This feature is developing'}))
-    }
-
-    return (
-        <div className={'w-[100%] p-4 absolute bottom-0 bg-white-color shadow-lg rounded-2xl'}>
-            <Flex gap={'middle'} justify={'space-between'}>
-                <Flex gap={'middle'}>
-                    Tax
-                </Flex>
-                <Flex gap={'middle'}>
-                    <div>
-                        <GradientButtonControl text={'Save'} onClick={() => {}}/>
-                    </div>
-                    <div>
-                        <OutlinedButtonControl text={'Save as draft'} onClick={handleSaveAsDraft}/>
-                    </div>
-                    <div>
-                        <Button>Cancel</Button>
-                    </div>
-                </Flex>
-            </Flex>
-        </div>
-    )
-}

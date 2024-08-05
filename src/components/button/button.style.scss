@@ -1,0 +1,32 @@
+.gradient-btn {
+  &.ant-btn.ant-btn-default {
+    background: linear-gradient(to right, var(--blue-color), var(--dark-blue-color));
+    border: none;
+    color: var(--white-color);
+    &:hover {
+      border: none;
+      background: linear-gradient(to right, var(--gray-color), var(--dark-gray-color));
+      color: var(--dark-blue-color);
+    }
+  }
+}
+.outlined-btn {
+  border-color: var(--dark-blue-color);
+  color: var(--dark-blue-color);
+  border: 2px solid;
+  &.ant-btn.ant-btn-default {
+    &:hover {
+      border-color: var(--dark-gray-color);
+      color: var(--dark-gray-color);
+    }
+  }
+}
+.no-outline-btn {
+  border: none;
+  color: var(--dark-blue-color);
+  &.ant-btn.ant-btn-default {
+    &:hover {
+      color: var(--dark-gray-color);
+    }
+  }
+}

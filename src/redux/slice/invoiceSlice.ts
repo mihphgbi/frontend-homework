@@ -1,35 +1,60 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import {createSlice} from '@reduxjs/toolkit'
+import {createInvoiceItem, getInvoiceList} from "../actions/invoice/invoice.action";
+import {InvoiceModel} from "../../models/invoice/invoice.model";
 
 export interface InvoiceState {
-    value: number
+    value: number,
+    status: 'loading' | 'succeeded' | 'failed' | '',
+    invoiceList: Array<InvoiceModel>,
+    totalPage: number,
+    itemPerPage: number,
+    pageSize: number
 }
 
 const initialState: InvoiceState = {
     value: 0,
+    status: '',
+    invoiceList: [],
+    totalPage: 1,
+    itemPerPage: 1,
+    pageSize: 1
 }
 
 export const invoiceSlice = createSlice({
     name: 'invoice',
     initialState,
     reducers: {
-        increment: (state) => {
-            // Redux Toolkit allows us to write "mutating" logic in reducers. It
-            // doesn't actually mutate the state because it uses the Immer library,
-            // which detects changes to a "draft state" and produces a brand new
-            // immutable state based off those changes
-            state.value += 1
-        },
         decrement: (state) => {
             state.value -= 1
         },
-        incrementByAmount: (state, action: PayloadAction<number>) => {
-            state.value += action.payload
-        },
     },
+    extraReducers: builder => {
+        builder
+            .addCase(createInvoiceItem.pending, (state: any, action) => {
+                state.status = 'loading'
+            })
+            .addCase(createInvoiceItem.fulfilled, (state: any, action) => {
+                state.status = 'succeeded'
+            })
+            .addCase(createInvoiceItem.rejected, (state: any, action) => {
+                state.status = 'failed'
+            })
+            .addCase(getInvoiceList.pending, (state: any, action) => {
+                state.status = 'loading'
+            })
+            .addCase(getInvoiceList.fulfilled, (state: any, action) => {
+                state.status = 'succeeded'
+                state.invoiceList = action.payload.invoiceList
+                state.totalPage = action.payload.totalPage
+                state.itemPerPage = action.payload.itemPerPage
+                state.pageSize = action.payload.pageSize
+            })
+            .addCase(getInvoiceList.rejected, (state: any, action) => {
+                state.status = 'failed'
+            })
+    }
 })
 
-// Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = invoiceSlice.actions
-
 export default invoiceSlice.reducer
+
+

@@ -14,4 +14,7 @@
     --light-green-color:#fff8e6;
     --light-pink-color:#fff0f1;
 }
+.ant-form-item {
+    margin-bottom: 0;
+}
 

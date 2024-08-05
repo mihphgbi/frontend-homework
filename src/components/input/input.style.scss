@@ -1,0 +1,7 @@
+.ant-input-outlined{
+  height: 2rem;
+  &:focus-within, &:hover {
+    border: 1px solid var(--dark-gray-color);
+    box-shadow: none;
+  }
+}

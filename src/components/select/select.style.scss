@@ -1,4 +1,8 @@
-.ant-select-outlined:not(.ant-select-customize-input) .ant-select-selector {
+.ant-select-outlined:not(.ant-select-customize-input) .ant-select-selector, .ant-select-selector{
   background: var(--gray-color);
   border: none;
+}
+
+.ant-select.ant-select-outlined {
+  border-radius: 6px;
 }
