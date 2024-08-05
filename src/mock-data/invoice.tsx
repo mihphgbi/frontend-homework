@@ -1,16 +1,4 @@
-import React from "react";
-import {TableColumnsType} from "antd";
-import {InvoiceModel, ItemInvoiceModel} from "../models/invoice/invoice.model";
-
-export const data: ItemInvoiceModel[] = [
-    {
-        id: '1',
-        name: 'Test',
-        quantity: 31,
-        unit: 'item',
-        unitPrice: 11000,
-    },
-];
+import {InvoiceModel} from "../models/invoice/invoice.model";
 export const CONTRACTOR_LIST = [
     {value: 'test1' , label: 'Test1' },
     {value: 'test2' , label: 'Test2' },
@@ -56,31 +44,37 @@ export const invoiceList: InvoiceModel[]=[
     {
         id: '000001',
         name: 'test invoice 0001',
-        invoiceDate: '',
-        dueDate: '',
+        invoiceDate: new Date(),
+        dueDate: new Date(),
         payment: 'payment1',
         contractor: 'test1',
         bankAccount: 'account2',
         documentType: 'type1',
+        status: 'paid',
+        vat: true
     },
     {
         id: '000001',
         name: 'test invoice 0001',
-        invoiceDate: '',
-        dueDate: '',
+        invoiceDate: new Date(),
+        dueDate: new Date(),
         payment: 'payment1',
         contractor: 'test1',
         bankAccount: 'account2',
         documentType: 'type1',
+        status: 'unpaid',
+        vat: true
     },
     {
         id: '000001',
         name: 'test invoice 0001',
-        invoiceDate: '',
-        dueDate: '',
+        invoiceDate: new Date(),
+        dueDate: new Date(),
         payment: 'payment1',
         contractor: 'test1',
         bankAccount: 'account2',
         documentType: 'type1',
+        status: 'expired',
+        vat: false
     }
 ]

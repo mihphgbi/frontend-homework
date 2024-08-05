@@ -32,6 +32,11 @@ export const layoutSlice = createSlice({
             state.alertStatus = 'success'
             state.msgAlert = action.payload.msgAlert
         },
+        openErrorAlert: (state,action) => {
+            state.isOpenAlert = action.payload.isOpenAlert
+            state.alertStatus = 'error'
+            state.msgAlert = action.payload.msgAlert
+        },
         closeAlert: (state, action) => {
             state.isOpenAlert = false
             state.alertStatus = ''
@@ -41,6 +46,6 @@ export const layoutSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const {activeMenu, openWarningAlert, openSuccessAlert,closeAlert} = layoutSlice.actions
+export const {activeMenu, openWarningAlert, openSuccessAlert,openErrorAlert,closeAlert} = layoutSlice.actions
 
 export default layoutSlice.reducer

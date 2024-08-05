@@ -1,5 +1,3 @@
-import {TableColumnsType} from "antd";
-
 export interface ItemInvoiceModel {
     id: string | number;
     name: string;
@@ -14,39 +12,35 @@ export interface ItemInvoiceModel {
 export interface InvoiceModel {
     id: string | number;
     name: string;
-    invoiceDate?: string;
-    dueDate?: string;
-    payment?: string;
     contractor?: string;
+    payment?: string;
     format?: string;
-    createDate?: string;
-    updateDate?: string;
     bankAccount?: string;
-    prepare?: string;
+    prepared?: string;
     documentType?: string;
+    vat?: boolean;
+    status?: 'paid' | 'unpaid' | 'expired'
+    invoiceDate?: Date;
+    dueDate?: Date;
+    createdDate?: Date;
+    updatedDate?: Date;
     itemInvoice?: Array<ItemInvoiceModel>
 }
 
-export const columns: TableColumnsType<ItemInvoiceModel> = [
-    {
-        title: 'Details',
-        dataIndex: 'name',
-    },
-    {
-        title: 'Quantity',
-        dataIndex: 'quantity',
-    },
-    {
-        title: 'Rate',
-        dataIndex: 'unit',
-    }, {
-        title: 'Price',
-        dataIndex: 'unitPrice',
-    }, {
-        title: 'Amount',
-        dataIndex: 'calculatedPrice',
-        render: (_, record) => (
-            record.unitPrice * record.quantity
-        )
-    }
-];
+export const initInvoiceData: InvoiceModel = {
+    id: '',
+    name: '',
+    payment: '',
+    contractor: '',
+    format: '',
+    bankAccount: '',
+    prepared: '',
+    documentType: '',
+    vat: false,
+    status: 'unpaid',
+    dueDate: new Date(),
+    createdDate: new Date(),
+    updatedDate: new Date(),
+    invoiceDate: new Date(),
+}
+

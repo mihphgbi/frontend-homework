@@ -1,14 +1,39 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {activeMenu} from "../../../../redux/slice/layoutSlice";
 import {MENU_ITEM} from "../../../../constants/menu/menu-item.constant";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../../../redux/store/store";
-import {Col, Row, Table, Typography} from "antd";
-import {columns} from "../../../../models/invoice/invoice.model";
+import {Col, Row, Table, TableColumnsType, Typography} from "antd";
+import {ItemInvoiceModel} from "../../../../models/invoice/invoice.model";
+
+export const columns: TableColumnsType<ItemInvoiceModel> = [
+    {
+        title: 'Details',
+        dataIndex: 'name',
+    },
+    {
+        title: 'Quantity',
+        dataIndex: 'quantity',
+    },
+    {
+        title: 'Rate',
+        dataIndex: 'unit',
+    }, {
+        title: 'Price',
+        dataIndex: 'unitPrice',
+    }, {
+        title: 'Amount',
+        dataIndex: 'calculatedPrice',
+        render: (_, record) => (
+            record.unitPrice * record.quantity
+        )
+    }
+];
 
 type InvoiceDetailProps = {}
 const InvoiceDetailPage: React.FC<InvoiceDetailProps> = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const [listData, setListData] = useState<ItemInvoiceModel[]>([])
 
     useEffect(() => {
         dispatch(activeMenu(MENU_ITEM.INVOICE_LIST))
@@ -32,17 +57,16 @@ const InvoiceDetailPage: React.FC<InvoiceDetailProps> = () => {
                         <Typography>Status</Typography>
                     </Col>
                 </Row>
-                <Row gutter={24}>
+            </div>
+            <div className={'bg-white-color rounded-2xl p-8 mt-10'}>
+                <div className={'w-[100%] table-template-wrapper'}>
                     <Table
                         rowKey={'id'}
-                        rowSelection={{
-                            ...rowSelection,
-                        }}
                         columns={columns}
                         dataSource={listData}
                         pagination={false}
                     />
-                </Row>
+                </div>
             </div>
         </>
     )

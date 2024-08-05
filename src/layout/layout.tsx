@@ -1,5 +1,5 @@
 import Header from "../components/header/header";
-import React, {FC, ReactElement, ReactNode, useEffect} from "react";
+import React, {FC, ReactElement, ReactNode} from "react";
 import Footer from "../components/footer/footer";
 import SideBarLeftMenu from "../components/side-bar-left-menu/side-bar-left-menu";
 import {Layout} from "antd";

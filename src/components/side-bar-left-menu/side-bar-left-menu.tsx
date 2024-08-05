@@ -50,7 +50,7 @@ const menuItems: MenuItem[] = [
             getItem(<LabelLink title={'Invoice list'} href={'/invoice'}/>, MENU_ITEM.INVOICE_LIST, <FileAddFilled/>),
             getItem(<LabelLink title={'Create new'} href={'/create-invoice'}/>, MENU_ITEM.CREATE_INVOICE,
                 <FileAddFilled/>),
-            getItem('Edit', MENU_ITEM.EDIT_INVOICE, <FileAddFilled/>),
+            getItem(<LabelLink title={'Edit'} href={'/edit-invoice'}/>, MENU_ITEM.EDIT_INVOICE, <FileAddFilled/>),
         ]),
         getItem(<LabelLink title={'Contractors'} href={'/contractors'}/>, MENU_ITEM.CONTRACTORS, <UserOutlined/>),
         getItem(<LabelLink title={'Products and Services'} href={'/products-and-services'}/>, MENU_ITEM.SERVICES,

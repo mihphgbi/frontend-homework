@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "~/src/styles/responsive.scss";
+@import "~/src/styles/template/table-template.scss";
+
 :root{
     --white-color: #ffffff;
     --black-color: #333333;
@@ -11,7 +14,7 @@
     --dark-gray-color:#A4AFCF;
     --gray-color:#F3F3FA;
     --light-yellow-color:#fff8e6;
-    --light-green-color:#fff8e6;
+    --light-green-color:#DAFBE4;
     --light-pink-color:#fff0f1;
 }
 .ant-form-item {

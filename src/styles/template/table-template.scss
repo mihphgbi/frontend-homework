@@ -1,0 +1,31 @@
+.table-template-wrapper {
+  .ant-table-wrapper {
+    .ant-table-thead {
+      > tr > th {
+        border-bottom: 1px solid var(--dark-blue-color);
+      }
+
+      .ant-table-cell {
+        padding: 5px 10px;
+        background: none;
+        color: var(--dark-blue-color);
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .ant-table-cell::before {
+        width: 0 !important;
+        height: 0 !important;
+      }
+    }
+
+    .ant-table-tbody {
+      .ant-table-cell {
+        padding: 5px 10px;
+        color: var(--dark-blue-color);
+      }
+    }
+  }
+}
+
+

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {memo} from "react";
 import {Route, Routes, useLocation} from "react-router-dom";
 import {routes} from "./routes";
 import {IRoute} from "../models/route/route.model";
@@ -10,9 +10,8 @@ const AppRoute: React.FC = (): JSX.Element => {
     const location = useLocation();
     return (
         <>
-
             <TransitionGroup>
-                <CSSTransition key={location.pathname} timeout={300}>
+                <CSSTransition location={location.pathname} timeout={500} exit={false}>
                     <Routes>
                         {routes.map((route: IRoute) => (
                             <Route key={route.key}
@@ -39,4 +38,4 @@ const AppRoute: React.FC = (): JSX.Element => {
         </>
     );
 };
-export default AppRoute;
+export default memo(AppRoute);

@@ -2,23 +2,62 @@ import React, {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {activeMenu, openWarningAlert} from "../../../../redux/slice/layoutSlice";
 import {MENU_ITEM} from "../../../../constants/menu/menu-item.constant";
-import {Col, Flex, Form, FormProps, Row, Table} from "antd";
+import {Col, Flex, Form, FormProps, Row, Table, TableColumnsType, Typography} from "antd";
 import InputControl from "../../../../components/input/input";
 import SelectControl from "../../../../components/select/select";
 import {
     BANK_ACCOUNT_OPTION,
     CONTRACTOR_LIST,
-    data, DOCUMENT_TYPE_LIST, FORMAT_LIST,
+    DOCUMENT_TYPE_LIST, FORMAT_LIST,
     PAYMENT_METHOD_LIST,
     PREPARE_OPTION
 } from "../../../../mock-data/invoice";
 import DatePickerControl from "../../../../components/date-picker/date-picker";
-import {columns, InvoiceModel, ItemInvoiceModel} from "../../../../models/invoice/invoice.model";
+import {initInvoiceData, InvoiceModel, ItemInvoiceModel} from "../../../../models/invoice/invoice.model";
 import ButtonControl from "../../../../components/button/button";
 import {createInvoiceItem} from "../../../../redux/actions/invoice/invoice.action";
 import {AppDispatch} from "../../../../redux/store/store";
+import {useNavigate} from "react-router-dom";
 
 const {Item} = Form;
+
+export const columns: TableColumnsType<ItemInvoiceModel> = [
+    {
+        title: 'Details',
+        dataIndex: 'name',
+        render: name => (
+            <InputControl minWidth={'100%'} width={'20%'} bgColor={'var(--white-color)'} value={name}/>
+        )
+    },
+    {
+        title: 'Quantity',
+        dataIndex: 'quantity',
+        render: quantity => (
+            <InputControl minWidth={'100%'} width={'20%'} bgColor={'var(--white-color)'} value={quantity}/>
+        )
+    },
+    {
+        title: 'Rate',
+        dataIndex: 'unit',
+        render: unit => (
+            <InputControl minWidth={'100%'} width={'20%'} bgColor={'var(--white-color)'} value={unit}/>
+        )
+    }, {
+        title: 'Price',
+        dataIndex: 'unitPrice',
+        render: unitPrice => (
+            <InputControl minWidth={'100%'} width={'15%'} bgColor={'var(--white-color)'} value={unitPrice}/>
+        )
+    }, {
+        title: 'Amount',
+        dataIndex: 'calculatedPrice',
+        render: (_, record) => (
+            <Typography className={'min-w-[15rem]'}>
+                {record.unitPrice * record.quantity}
+            </Typography>
+        )
+    }
+];
 
 // rowSelection object indicates the need for row selection
 const rowSelection = {
@@ -31,25 +70,12 @@ const rowSelection = {
     }),
 };
 
-const initInvoiceData: InvoiceModel = {
-    id: '',
-    name: '',
-    invoiceDate: '',
-    dueDate: '',
-    payment: '',
-    contractor: '',
-    format: '',
-    createDate: '',
-    updateDate: '',
-    bankAccount: '',
-    prepare: '',
-    documentType: ''
-}
 
 type CreateInvoiceProps = {}
 const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const [listData, setListData] = useState<ItemInvoiceModel[]>(data)
+    const navigate = useNavigate();
+    const [listData, setListData] = useState<ItemInvoiceModel[]>([])
     const [invoiceData, setInvoiceData] = useState<InvoiceModel>(initInvoiceData)
 
 
@@ -67,11 +93,13 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
         return;
     }
 
-    const onFinish: FormProps<InvoiceModel>['onFinish'] =  (values) => {
+    const onFinish: FormProps<InvoiceModel>['onFinish'] = (values) => {
         dispatch(createInvoiceItem({values: values}));
+        navigate('/invoice');
     };
 
-    const onFinishFailed: FormProps<InvoiceModel>['onFinishFailed'] = (errorInfo) => {};
+    const onFinishFailed: FormProps<InvoiceModel>['onFinishFailed'] = (errorInfo) => {
+    };
 
     const handleAddItem = () => {
         const newItem: ItemInvoiceModel = {
@@ -82,6 +110,9 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
             unitPrice: 0,
         }
         setListData([...listData, newItem]);
+    }
+    const handleCancel = () => {
+        setInvoiceData(initInvoiceData);
     }
 
     return (
@@ -111,13 +142,13 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
                                 </Item>
                             </Col>
                             <Col className="gutter-row" span={8}>
-                                <Item<InvoiceModel> name={'prepare'}
+                                <Item<InvoiceModel> name={'prepared'}
                                                     rules={[{
                                                         required: true,
                                                         message: 'Please select prepared option'
                                                     }]}>
                                     <SelectControl placeholder={'Prepared'}
-                                                   value={invoiceData.prepare}
+                                                   value={invoiceData.prepared}
                                                    onChange={(value) => handleChangeInput(value, 'prepare')}
                                                    options={PREPARE_OPTION}
                                     />
@@ -208,7 +239,7 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
                                 <ButtonControl text={'Add more item'} onClick={handleAddItem}/>
                             </div>
                         </Flex>
-                        <div className={'w-[100%]'}>
+                        <div className={'w-[100%] table-template-wrapper'}>
                             <Table
                                 rowKey={'id'}
                                 rowSelection={{
@@ -222,22 +253,17 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
                     </Flex>
                 </Flex>
                 <div className={'w-[100%] p-4 absolute bottom-0 bg-white-color shadow-lg rounded-2xl'}>
-                    <Flex gap={'middle'} justify={'space-between'}>
-                        <Flex gap={'middle'}>
-                            Tax
-                        </Flex>
-                        <Flex gap={'middle'}>
-                            <div>
-                                <ButtonControl style={{minWidth: '8rem'}} btnType={'gradient-btn'} text={'Save'} htmlType={'submit'}/>
-                            </div>
-                            <div>
-                                <ButtonControl text={'Save as draft'} onClick={handleSaveAsDraft}/>
-                            </div>
-                            <div>
-                                <ButtonControl btnType={'no-outline-btn'} text={'Cancel'} onClick={() => {
-                                }}/>
-                            </div>
-                        </Flex>
+                    <Flex gap={'middle'} justify={'flex-end'}>
+                        <div>
+                            <ButtonControl style={{minWidth: '8rem'}} btnType={'gradient-btn'} text={'Save'}
+                                           htmlType={'submit'}/>
+                        </div>
+                        <div>
+                            <ButtonControl text={'Save as draft'} onClick={handleSaveAsDraft}/>
+                        </div>
+                        <div>
+                            <ButtonControl btnType={'no-outline-btn'} text={'Cancel'} onClick={handleCancel}/>
+                        </div>
                     </Flex>
                 </div>
             </Form>

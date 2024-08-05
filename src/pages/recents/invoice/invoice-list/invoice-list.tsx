@@ -2,13 +2,17 @@ import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {activeMenu, openWarningAlert} from "../../../../redux/slice/layoutSlice";
 import {MENU_ITEM} from "../../../../constants/menu/menu-item.constant";
-import {Col, Flex, Row, Table, TableColumnsType} from "antd";
+import {Col, Flex, Row, Table, TableColumnsType, Typography} from "antd";
 import SelectControl from "../../../../components/select/select";
-import {columns, InvoiceModel, ItemInvoiceModel} from "../../../../models/invoice/invoice.model";
-import {CONTRACTOR_LIST, data} from "../../../../mock-data/invoice";
+import {ItemInvoiceModel} from "../../../../models/invoice/invoice.model";
+import {CONTRACTOR_LIST} from "../../../../mock-data/invoice";
 import ButtonControl from "../../../../components/button/button";
 import {getInvoiceList} from "../../../../redux/actions/invoice/invoice.action";
 import {AppDispatch} from "../../../../redux/store/store";
+import {useNavigate} from "react-router-dom";
+import {CheckOutlined} from "@ant-design/icons";
+import {formatDateToDDMMYYYY} from "../../../../utils/format.utils";
+import {PAGINATION_CONSTANT_OPTIONS} from "../../../../constants/pagination/pagination.constant";
 
 type InvoiceListProps = {}
 
@@ -34,23 +38,51 @@ const invoiceListColumns: TableColumnsType<ItemInvoiceModel> = [
     },
     {
         title: 'Invoice Date',
-        dataIndex: 'unit',
+        dataIndex: 'invoiceDate',
+        render: (text) => <a>{formatDateToDDMMYYYY(text.toISOString())}</a>,
     }, {
         title: 'Status',
-        dataIndex: 'unitPrice',
+        dataIndex: 'status',
+        render: (status) => {
+            const bgFillBtn = status === 'paid' ? 'var(--light-green-color)' :
+                (status === 'expired' ? 'var(--light-pink-color)' : 'var(--light-yellow-color)')
+            return (
+                <>
+                    <ButtonControl minWidth={'8rem'}
+                                   btnType={'fill-btn'}
+                                   bgFillBtn={bgFillBtn}
+                                   style={{textTransform: 'capitalize'}}
+                                   text={status}/>
+                </>
+            )
+        },
     }, {
         title: 'Vat',
-        dataIndex: 'calculatedPrice',
+        dataIndex: 'vat',
+        render: vat => {
+            return (
+                <>
+                    {vat ? <CheckOutlined className={'text-dark-blue-color'}/> : ''}
+                </>
+            )
+        }
     },
     {
         title: 'Exports',
+        render: () => (
+            <ButtonControl text={'Coming soon'} btnType={'no-outline-btn'}/>
+        )
     }
 ];
 
 
 const InvoiceListPage: React.FC<InvoiceListProps> = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+
     const [listData, setListData] = useState([]);
+    const [selectionItemPerPage, setSelectionItemPerPage] = useState<number>(10);
+
     const invoice = useSelector((state: any) => state.invoice);
     const userId = '00001';
 
@@ -75,10 +107,14 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
                         <Row gutter={24}>
                             <Col className="gutter-row" span={12}>
                                 <Flex gap={'0.5rem'}>
-                                    <ButtonControl btnType={'no-outline-btn'} text={'All'} onClick={handleDeveloping}/>
-                                    <ButtonControl btnType={'no-outline-btn'} text={'Edit'} onClick={handleDeveloping}/>
-                                    <ButtonControl btnType={'no-outline-btn'} text={'In-progress'} onClick={handleDeveloping}/>
-                                    <ButtonControl btnType={'no-outline-btn'} text={'Drafts'} onClick={handleDeveloping}/>
+                                    <ButtonControl btnType={'no-outline-btn'} text={'All'}
+                                                   onClick={handleDeveloping}/>
+                                    <ButtonControl btnType={'no-outline-btn'} text={'Edit'}
+                                                   onClick={handleDeveloping}/>
+                                    <ButtonControl btnType={'no-outline-btn'} text={'In-progress'}
+                                                   onClick={handleDeveloping}/>
+                                    <ButtonControl btnType={'no-outline-btn'} text={'Drafts'}
+                                                   onClick={handleDeveloping}/>
                                 </Flex>
                             </Col>
                             <Col className="gutter-row" span={12}>
@@ -86,34 +122,35 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
                                     <ButtonControl style={{minWidth: '8rem', minHeight: '2rem'}}
                                                    btnType={'gradient-btn'}
                                                    text={'Create'}
+                                                   onClick={() => navigate('/create-invoice')}
                                     />
                                 </Flex>
                             </Col>
                         </Row>
 
-                        <Row gutter={24}>
-                            <Col className="gutter-row" span={4.8}>
+                        <Row gutter={[8, 8]}>
+                            <Col className="gutter-row" flex={1}>
                                 <SelectControl placeholder={'All Contractors'}
                                                options={CONTRACTOR_LIST}
                                                width={'100%'}
                                 />
                             </Col>
-                            <Col className="gutter-row" span={4.8}>
+                            <Col className="gutter-row" flex={1}>
                                 <SelectControl placeholder={'VAT'}
                                                options={[{value: 1, label: 1}, {value: 2, label: 2}]}
                                 />
                             </Col>
-                            <Col className="gutter-row" span={4.8}>
+                            <Col className="gutter-row" flex={1}>
                                 <SelectControl placeholder={'From'}
                                                options={[{value: 1, label: 1}, {value: 2, label: 2}]}
                                 />
                             </Col>
-                            <Col className="gutter-row" span={4.8}>
+                            <Col className="gutter-row" flex={1}>
                                 <SelectControl placeholder={'To'}
                                                options={[{value: 1, label: 1}, {value: 2, label: 2}]}
                                 />
                             </Col>
-                            <Col className="gutter-row" span={4.8}>
+                            <Col className="gutter-row" flex={1}>
                                 <SelectControl placeholder={'All statuses'}
                                                options={[{value: 1, label: 1}, {value: 2, label: 2}]}
                                 />
@@ -121,33 +158,27 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
                         </Row>
                     </Flex>
                     <Flex vertical gap={'middle'} className={'bg-white-color rounded-2xl p-8'}>
-                        <Table
-                            rowSelection={{
-                                ...rowSelection,
-                            }}
-                            columns={invoiceListColumns}
-                            dataSource={listData}
-                            pagination={false}
-                        />
+                        <div className={'table-template-wrapper'}>
+                            <Table
+                                rowSelection={{
+                                    ...rowSelection,
+                                }}
+                                columns={invoiceListColumns}
+                                dataSource={listData}
+                                pagination={false}
+                                loading={invoice.status === 'loading'}
+                            />
+                        </div>
                     </Flex>
                 </Flex>
-                <div className={'w-[100%] p-4 absolute bottom-0 bg-white-color shadow-lg rounded-2xl'}>
-                    <Flex gap={'middle'} justify={'space-between'}>
-                        <Flex gap={'middle'}>
-                            Tax
-                        </Flex>
-                        <Flex gap={'middle'}>
-                            <div>
-                                {/*<ButtonControl btnType={'gradient-btn'} text={'Save'} onClick={() => {}}/>*/}
-                            </div>
-                            <div>
-                                {/*<ButtonControl text={'Save as draft'} onClick={handleSaveAsDraft}/>*/}
-                            </div>
-                            <div>
-                                {/*<ButtonControl btnType={'no-outline-btn'} text={'Cancel'} onClick={()=>{}}/>*/}
-                            </div>
-                        </Flex>
-                    </Flex>
+                <div
+                    className={'w-[100%] p-2 absolute bottom-0 bg-white-color shadow-lg rounded-lg flex flex-row align-middle'}>
+                    <Typography className={'pl-2 w-16 flex items-center'}>Show:</Typography>
+                    <SelectControl value={selectionItemPerPage}
+                                   width={'6rem'}
+                                   minWidth={'3rem'}
+                                   onChange={(value) => setSelectionItemPerPage(value)}
+                                   options={PAGINATION_CONSTANT_OPTIONS}/>
                 </div>
             </div>
         </>

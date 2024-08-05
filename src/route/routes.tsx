@@ -4,6 +4,13 @@ import HelpIndexPage from "../pages/features/help/help-page";
 import SettingIndexPage from "../pages/features/settings/setting";
 import StatisticsIndexPage from "../pages/others/statistics/statistics-index";
 import InvoiceDetailPage from "../pages/recents/invoice/invoice-details/invoice-details";
+import EditInvoiceIndexPage from "../pages/recents/invoice/edit-invoice/edit-invoice";
+// import HomePage from "../pages/recents/home/home";
+// import InvoiceListPage from "../pages/recents/invoice/invoice-list/invoice-list";
+// import CreateInvoice from "../pages/recents/invoice/create-invoice/create-invoice";
+// import ContractorsIndexPage from "../pages/recents/contractors/contractors-index";
+// import ProductAndServicesIndexPage from "../pages/recents/products-and-serivces/products-and-services";
+// import UsersIndexPage from "../pages/others/users/users-index";
 // Lazy load the components
 const InvoiceListPage = React.lazy(() => import('../pages/recents/invoice/invoice-list/invoice-list'));
 const CreateInvoice = React.lazy(() => import('../pages/recents/invoice/create-invoice/create-invoice'));
@@ -40,6 +47,13 @@ export const routes: Array<IRoute> = [
         path: '/invoice-details',
         enabled: true,
         component: InvoiceDetailPage
+    },
+    {
+        key: 'edit-invoice-route',
+        title: 'Edit Invoice',
+        path: '/edit-invoice',
+        enabled: true,
+        component: EditInvoiceIndexPage
     },
     {
         key: 'help',
