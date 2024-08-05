@@ -228,7 +228,7 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
                         </Flex>
                         <Flex gap={'middle'}>
                             <div>
-                                <ButtonControl btnType={'gradient-btn'} text={'Save'} htmlType={'submit'}/>
+                                <ButtonControl style={{minWidth: '8rem'}} btnType={'gradient-btn'} text={'Save'} htmlType={'submit'}/>
                             </div>
                             <div>
                                 <ButtonControl text={'Save as draft'} onClick={handleSaveAsDraft}/>

@@ -3,6 +3,7 @@ import React from 'react';
 import HelpIndexPage from "../pages/features/help/help-page";
 import SettingIndexPage from "../pages/features/settings/setting";
 import StatisticsIndexPage from "../pages/others/statistics/statistics-index";
+import InvoiceDetailPage from "../pages/recents/invoice/invoice-details/invoice-details";
 // Lazy load the components
 const InvoiceListPage = React.lazy(() => import('../pages/recents/invoice/invoice-list/invoice-list'));
 const CreateInvoice = React.lazy(() => import('../pages/recents/invoice/create-invoice/create-invoice'));
@@ -32,6 +33,13 @@ export const routes: Array<IRoute> = [
         path: '/create-invoice',
         enabled: true,
         component: CreateInvoice
+    },
+    {
+        key: 'invoice-details-route',
+        title: 'Invoice Details',
+        path: '/invoice-details',
+        enabled: true,
+        component: InvoiceDetailPage
     },
     {
         key: 'help',
