@@ -9,10 +9,11 @@ import {CONTRACTOR_LIST} from "../../../../mock-data/invoice";
 import ButtonControl from "../../../../components/button/button";
 import {getInvoiceList} from "../../../../redux/actions/invoice/invoice.action";
 import {AppDispatch} from "../../../../redux/store/store";
-import {useNavigate} from "react-router-dom";
-import {CheckOutlined} from "@ant-design/icons";
+import {Link, useNavigate} from "react-router-dom";
+import {CheckOutlined, DownOutlined} from "@ant-design/icons";
 import {formatDateToDDMMYYYY} from "../../../../utils/format.utils";
-import {PAGINATION_CONSTANT_OPTIONS} from "../../../../constants/pagination/pagination.constant";
+import {ITEM_PER_PAGE_CONSTANT} from "../../../../constants/pagination/pagination.constant";
+import DatePickerControl from "../../../../components/date-picker/date-picker";
 
 type InvoiceListProps = {}
 
@@ -31,6 +32,7 @@ const invoiceListColumns: TableColumnsType<ItemInvoiceModel> = [
     {
         title: 'Invoice ID',
         dataIndex: 'id',
+        render: (_,record) => <Link to={`/invoice-details?id=${record.id}`}>{record.name}</Link>
     },
     {
         title: 'Billed to',
@@ -39,7 +41,7 @@ const invoiceListColumns: TableColumnsType<ItemInvoiceModel> = [
     {
         title: 'Invoice Date',
         dataIndex: 'invoiceDate',
-        render: (text) => <a>{formatDateToDDMMYYYY(text.toISOString())}</a>,
+        render: (text) => <p>{formatDateToDDMMYYYY(text.toISOString())}</p>,
     }, {
         title: 'Status',
         dataIndex: 'status',
@@ -141,14 +143,10 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
                                 />
                             </Col>
                             <Col className="gutter-row" flex={1}>
-                                <SelectControl placeholder={'From'}
-                                               options={[{value: 1, label: 1}, {value: 2, label: 2}]}
-                                />
+                                <DatePickerControl suffixIcon={<DownOutlined />} placeholder={'From'}/>
                             </Col>
                             <Col className="gutter-row" flex={1}>
-                                <SelectControl placeholder={'To'}
-                                               options={[{value: 1, label: 1}, {value: 2, label: 2}]}
-                                />
+                                <DatePickerControl suffixIcon={<DownOutlined />} placeholder={'To'}/>
                             </Col>
                             <Col className="gutter-row" flex={1}>
                                 <SelectControl placeholder={'All statuses'}
@@ -175,10 +173,10 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
                     className={'w-[100%] p-2 absolute bottom-0 bg-white-color shadow-lg rounded-lg flex flex-row align-middle'}>
                     <Typography className={'pl-2 w-16 flex items-center'}>Show:</Typography>
                     <SelectControl value={selectionItemPerPage}
-                                   width={'6rem'}
+                                   width={'7rem'}
                                    minWidth={'3rem'}
                                    onChange={(value) => setSelectionItemPerPage(value)}
-                                   options={PAGINATION_CONSTANT_OPTIONS}/>
+                                   options={ITEM_PER_PAGE_CONSTANT}/>
                 </div>
             </div>
         </>

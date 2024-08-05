@@ -1,17 +1,16 @@
 import React from "react";
-import {DatePicker} from 'antd';
+import {DatePicker, DatePickerProps} from 'antd';
 import './date-picker.style.scss.css';
 
-interface DatePickerProps {
+interface DatePickerControlProps extends DatePickerProps {
     placeholder?: string
     onChange?: () => void
     disabled?: boolean
     width?: string
     height?: string
-
 }
 
-const DatePickerControl: React.FC<DatePickerProps> = ({...props}) => {
+const DatePickerControl: React.FC<DatePickerControlProps> = ({...props}) => {
     const {width = '100%', height = '2.25rem'} = props;
 
     return (

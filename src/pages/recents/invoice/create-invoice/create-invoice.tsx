@@ -205,8 +205,7 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
                                                         required: true,
                                                         message: 'Please select a date'
                                                     }]}>
-                                    <DatePickerControl placeholder={'Invoice date'}
-                                    />
+                                    <DatePickerControl placeholder={'Invoice date'}/>
                                 </Item>
                             </Col>
                             <Col className="gutter-row" span={8}>

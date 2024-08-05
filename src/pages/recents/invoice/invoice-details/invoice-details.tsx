@@ -5,6 +5,9 @@ import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../../../redux/store/store";
 import {Col, Row, Table, TableColumnsType, Typography} from "antd";
 import {ItemInvoiceModel} from "../../../../models/invoice/invoice.model";
+import ButtonControl from "../../../../components/button/button";
+import {useNavigate} from "react-router-dom";
+import {ArrowLeftOutlined} from "@ant-design/icons";
 
 export const columns: TableColumnsType<ItemInvoiceModel> = [
     {
@@ -33,13 +36,24 @@ export const columns: TableColumnsType<ItemInvoiceModel> = [
 type InvoiceDetailProps = {}
 const InvoiceDetailPage: React.FC<InvoiceDetailProps> = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const [listData, setListData] = useState<ItemInvoiceModel[]>([])
 
     useEffect(() => {
         dispatch(activeMenu(MENU_ITEM.INVOICE_LIST))
     }, [dispatch])
     return (
-        <>
+        <div>
+            <div className={'mb-3'}>
+                <ButtonControl iconPosition={'start'}
+                               icon={<ArrowLeftOutlined className={'text-dark-blue-color'}/>}
+                               text={'Back'}
+                               style={{
+                                   borderRadius: '1rem',
+                                   border: '1px solid'
+                               }}
+                               onClick={() => navigate('/invoice')}/>
+            </div>
             <div className={'bg-white-color rounded-2xl p-8'}>
                 <Row gutter={24}>
                     <Col span={12}>
@@ -68,7 +82,7 @@ const InvoiceDetailPage: React.FC<InvoiceDetailProps> = () => {
                     />
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 export default InvoiceDetailPage
