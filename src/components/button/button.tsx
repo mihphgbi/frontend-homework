@@ -31,7 +31,7 @@ const ButtonControl: React.FC<ButtonControlProps> = ({...props}) => {
                    style={{
                        backgroundColor: btntype === 'fill-btn' ? bgFillBtn : '',
                        color: btntype === 'fill-btn' ? textColor : '',
-                       minwidth: minWidth,
+                       minWidth: minWidth,
                        ...style
                    }}
             >
