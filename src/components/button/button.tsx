@@ -6,7 +6,7 @@ import './button.style.scss';
 interface ButtonControlProps extends ButtonProps {
     text: string,
     disabled?: boolean,
-    btnType?: 'gradient-btn' | 'outlined-btn' | 'no-outline-btn' | 'fill-btn'
+    btntype?: 'gradient-btn' | 'outlined-btn' | 'no-outline-btn' | 'fill-btn'
     bgFillBtn?: string
     textColor?: string
     minWidth?: string
@@ -19,7 +19,7 @@ const ButtonControl: React.FC<ButtonControlProps> = ({...props}) => {
         disabled = false,
         bgFillBtn = 'var(--gray-color)',
         textColor = 'var(--dark-blue-color)',
-        btnType = 'outlined-btn',
+        btntype = 'outlined-btn',
         minWidth = '5rem',
         style
     } = props
@@ -27,11 +27,11 @@ const ButtonControl: React.FC<ButtonControlProps> = ({...props}) => {
         <>
             <Button {...props}
                    disabled={disabled}
-                   className={`${btnType} font-medium`}
+                   className={`${btntype} font-medium`}
                    style={{
-                       backgroundColor: btnType === 'fill-btn' ? bgFillBtn : '',
-                       color: btnType === 'fill-btn' ? textColor : '',
-                       minWidth: minWidth,
+                       backgroundColor: btntype === 'fill-btn' ? bgFillBtn : '',
+                       color: btntype === 'fill-btn' ? textColor : '',
+                       minwidth: minWidth,
                        ...style
                    }}
             >

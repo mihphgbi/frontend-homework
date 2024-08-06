@@ -188,7 +188,7 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
 
     const handleAddItem = () => {
         const newItem: ItemInvoiceModel = {
-            id: '',
+            id: listData.length + 1,
             name: '',
             quantity: 0,
             unit: '',
@@ -344,14 +344,14 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
             <div className={'w-[100%] p-4 absolute bottom-0 bg-white-color shadow-lg rounded-2xl'}>
                 <Flex gap={'middle'} justify={'flex-end'}>
                     <div>
-                        <ButtonControl style={{minWidth: '8rem'}} btnType={'gradient-btn'} text={'Save'}
+                        <ButtonControl style={{minWidth: '8rem'}} btntype={'gradient-btn'} text={'Save'}
                                        onClick={handleSubmit}/>
                     </div>
                     <div>
                         <ButtonControl text={'Save as draft'} onClick={handleSaveAsDraft}/>
                     </div>
                     <div>
-                        <ButtonControl btnType={'no-outline-btn'} text={'Cancel'} onClick={() => {
+                        <ButtonControl btntype={'no-outline-btn'} text={'Cancel'} onClick={() => {
                         }}/>
                     </div>
                 </Flex>

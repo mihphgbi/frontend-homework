@@ -14,20 +14,6 @@ import {CheckOutlined, DownOutlined} from "@ant-design/icons";
 import {formatDateToDDMMYYYY} from "../../../../utils/format.utils";
 import {ITEM_PER_PAGE_CONSTANT} from "../../../../constants/pagination/pagination.constant";
 import DatePickerControl from "../../../../components/date-picker/date-picker";
-import PaginationControl from "../../../../components/pagination/pagination-control";
-
-type InvoiceListProps = {}
-
-// rowSelection object indicates the need for row selection
-const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: ItemInvoiceModel[]) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
-    getCheckboxProps: (record: ItemInvoiceModel) => ({
-        disabled: record.name === 'Disabled User', // Column configuration not to be checked
-        name: record.name,
-    }),
-};
 
 const invoiceListColumns: TableColumnsType<ItemInvoiceModel> = [
     {
@@ -52,7 +38,7 @@ const invoiceListColumns: TableColumnsType<ItemInvoiceModel> = [
             return (
                 <>
                     <ButtonControl minWidth={'8rem'}
-                                   btnType={'fill-btn'}
+                                   btntype={'fill-btn'}
                                    bgFillBtn={bgFillBtn}
                                    style={{textTransform: 'capitalize'}}
                                    text={status}/>
@@ -73,19 +59,20 @@ const invoiceListColumns: TableColumnsType<ItemInvoiceModel> = [
     {
         title: 'Exports',
         render: () => (
-            <ButtonControl text={'Coming soon'} btnType={'no-outline-btn'}/>
+            <ButtonControl text={'Coming soon'} btntype={'no-outline-btn'}/>
         )
     }
 ];
 
 
-const InvoiceListPage: React.FC<InvoiceListProps> = () => {
+const InvoiceListPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
     const [listData, setListData] = useState([]);
     const [selectionItemPerPage, setSelectionItemPerPage] = useState<number>(10);
-    const [pageSize, setPageSize] = useState<number>(1);
+    const [pageNumber, setPageNumber] = useState<number>(1);
+    const [totalCount, setTotalCount] = useState<number>(1);
     const invoice = useSelector((state: any) => state.invoice);
 
     useEffect(() => {
@@ -95,21 +82,27 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
     useEffect(() => {
         const param = {
             userId: '00001',
-            pageSize: pageSize,
+            pageNumber: pageNumber,
             itemPerPage: selectionItemPerPage
         };
         dispatch(getInvoiceList(param))
-    }, [pageSize, selectionItemPerPage])
+    }, [pageNumber, selectionItemPerPage])
 
     useEffect(() => {
         setListData(invoice.invoiceList);
+        setTotalCount(invoice.totalCount)
     }, [invoice])
 
     const handleDeveloping = () => {
         dispatch(openWarningAlert({isOpenAlert: true, msgAlert: 'This feature is developing'}))
     }
     const handlePaginationChange = (value: number) => {
-        setPageSize(value);
+        setPageNumber(value);
+    }
+    const handleChangeItemPerPage = (value: number) => {
+        setSelectionItemPerPage(value);
+        setPageNumber(1);
+        setTotalCount(1);
     }
 
     return (
@@ -120,20 +113,20 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
                         <Row gutter={24}>
                             <Col className="gutter-row" span={12}>
                                 <Flex gap={'0.5rem'}>
-                                    <ButtonControl btnType={'no-outline-btn'} text={'All'}
+                                    <ButtonControl btntype={'no-outline-btn'} text={'All'}
                                                    onClick={handleDeveloping}/>
-                                    <ButtonControl btnType={'no-outline-btn'} text={'Edit'}
+                                    <ButtonControl btntype={'no-outline-btn'} text={'Edit'}
                                                    onClick={handleDeveloping}/>
-                                    <ButtonControl btnType={'no-outline-btn'} text={'In-progress'}
+                                    <ButtonControl btntype={'no-outline-btn'} text={'In-progress'}
                                                    onClick={handleDeveloping}/>
-                                    <ButtonControl btnType={'no-outline-btn'} text={'Drafts'}
+                                    <ButtonControl btntype={'no-outline-btn'} text={'Drafts'}
                                                    onClick={handleDeveloping}/>
                                 </Flex>
                             </Col>
                             <Col className="gutter-row" span={12}>
                                 <Flex justify={'flex-end'}>
                                     <ButtonControl style={{minWidth: '8rem', minHeight: '2rem'}}
-                                                   btnType={'gradient-btn'}
+                                                   btntype={'gradient-btn'}
                                                    text={'Create'}
                                                    onClick={() => navigate('/create-invoice')}
                                     />
@@ -169,17 +162,17 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
                     <Flex vertical gap={'middle'} className={'bg-white-color rounded-2xl p-8'}>
                         <div className={'table-template-wrapper'}>
                             <Table
-                                rowSelection={{
-                                    ...rowSelection,
-                                }}
+                                rowKey={'id'}
                                 columns={invoiceListColumns}
                                 dataSource={listData}
                                 loading={invoice.status === 'loading'}
                                 pagination={{
                                     onChange: handlePaginationChange,
-                                    defaultPageSize: invoice.itemPerPage,
-                                    current: invoice.pageSize,
+                                    pageSize: selectionItemPerPage,
+                                    current: pageNumber,
                                     position: ['bottomLeft'],
+                                    total: totalCount,
+                                    hideOnSinglePage: true
                                 }}
                             />
                         </div>
@@ -191,7 +184,7 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
                     <SelectControl value={selectionItemPerPage}
                                    width={'7rem'}
                                    minWidth={'3rem'}
-                                   onChange={(value) => setSelectionItemPerPage(value)}
+                                   onChange={(value) => handleChangeItemPerPage(value)}
                                    options={ITEM_PER_PAGE_CONSTANT}/>
                     <Typography className={'pl-2 w-16 flex items-center text-dark-blue-color'}>per page</Typography>
                 </div>

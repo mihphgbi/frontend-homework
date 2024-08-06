@@ -8,7 +8,8 @@ export interface InvoiceState {
     invoiceList: Array<InvoiceModel>,
     totalPage: number,
     itemPerPage: number,
-    pageSize: number,
+    pageNumber: number,
+    totalCount: number,
     createSucceeded: boolean,
     invoiceDetails: object,
 }
@@ -19,7 +20,8 @@ const initialState: InvoiceState = {
     invoiceList: [],
     totalPage: 1,
     itemPerPage: 1,
-    pageSize: 1,
+    pageNumber: 1,
+    totalCount: 1,
     createSucceeded: false,
     invoiceDetails: {}
 }
@@ -52,7 +54,8 @@ export const invoiceSlice = createSlice({
                 state.invoiceList = action.payload.invoiceList
                 state.totalPage = action.payload.totalPage
                 state.itemPerPage = action.payload.itemPerPage
-                state.pageSize = action.payload.pageSize
+                state.pageNumber = action.payload.pageNumber
+                state.totalCount = action.payload.totalCount
             })
             .addCase(getInvoiceList.rejected, (state: any, action) => {
                 state.status = 'failed'
