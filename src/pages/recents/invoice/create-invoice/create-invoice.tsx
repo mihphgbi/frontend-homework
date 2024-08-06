@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {useDispatch} from "react-redux";
-import {activeMenu, openWarningAlert} from "../../../../redux/slice/layoutSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {activeMenu, openErrorAlert, openWarningAlert} from "../../../../redux/slice/layoutSlice";
 import {MENU_ITEM} from "../../../../constants/menu/menu-item.constant";
 import {Col, Flex, Form, FormProps, Row, Table, TableColumnsType, Typography} from "antd";
 import InputControl from "../../../../components/input/input";
@@ -18,46 +18,9 @@ import ButtonControl from "../../../../components/button/button";
 import {createInvoiceItem} from "../../../../redux/actions/invoice/invoice.action";
 import {AppDispatch} from "../../../../redux/store/store";
 import {useNavigate} from "react-router-dom";
+import {formatCurrency} from "../../../../utils/format.utils";
 
 const {Item} = Form;
-
-export const columns: TableColumnsType<ItemInvoiceModel> = [
-    {
-        title: 'Details',
-        dataIndex: 'name',
-        render: name => (
-            <InputControl minWidth={'100%'} width={'20%'} bgColor={'var(--white-color)'} value={name}/>
-        )
-    },
-    {
-        title: 'Quantity',
-        dataIndex: 'quantity',
-        render: quantity => (
-            <InputControl minWidth={'100%'} width={'20%'} bgColor={'var(--white-color)'} value={quantity}/>
-        )
-    },
-    {
-        title: 'Rate',
-        dataIndex: 'unit',
-        render: unit => (
-            <InputControl minWidth={'100%'} width={'20%'} bgColor={'var(--white-color)'} value={unit}/>
-        )
-    }, {
-        title: 'Price',
-        dataIndex: 'unitPrice',
-        render: unitPrice => (
-            <InputControl minWidth={'100%'} width={'15%'} bgColor={'var(--white-color)'} value={unitPrice}/>
-        )
-    }, {
-        title: 'Amount',
-        dataIndex: 'calculatedPrice',
-        render: (_, record) => (
-            <Typography className={'min-w-[15rem]'}>
-                {record.unitPrice * record.quantity}
-            </Typography>
-        )
-    }
-];
 
 // rowSelection object indicates the need for row selection
 const rowSelection = {
@@ -74,19 +37,112 @@ const rowSelection = {
 type CreateInvoiceProps = {}
 const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const [form] = Form.useForm();
+    const [formTable] = Form.useForm();
     const navigate = useNavigate();
+    const createSucceeded = useSelector((state: any) => state.invoice.createSucceeded);
+
     const [listData, setListData] = useState<ItemInvoiceModel[]>([])
     const [invoiceData, setInvoiceData] = useState<InvoiceModel>(initInvoiceData)
-
+    const columns: TableColumnsType<ItemInvoiceModel> = [
+        {
+            title: 'Details',
+            dataIndex: 'name',
+            render: (name, record, index) => (
+                <Form.Item name={['name', index]} rules={[{required: true, message: 'Please input a detail'}]}>
+                    <InputControl onChange={(e) => onChangeListData(index, e.target.value, 'name')}
+                                  minWidth={'100%'}
+                                  width={'20%'}
+                                  bgColor={'var(--white-color)'}
+                                  value={name}
+                    />
+                </Form.Item>
+            )
+        },
+        {
+            title: 'Quantity',
+            dataIndex: 'quantity',
+            render: (quantity, record, index) => (
+                <Form.Item name={['quantity', index]} rules={[{required: true, message: 'Please input a quantity'}]}>
+                    <InputControl onChange={(e) => onChangeListData(index, e.target.value, 'quantity')}
+                                  minWidth={'100%'}
+                                  width={'20%'}
+                                  bgColor={'var(--white-color)'}
+                                  value={quantity}
+                                  type={'number'}
+                    />
+                </Form.Item>
+            )
+        },
+        {
+            title: 'Rate',
+            dataIndex: 'unit',
+            render: (unit, record, index) => (
+                <Form.Item name={['unit', index]} rules={[{required: true, message: 'Please input a unit'}]}>
+                    <InputControl onChange={(e) => onChangeListData(index, e.target.value, 'unit')}
+                                  minWidth={'100%'}
+                                  width={'20%'}
+                                  bgColor={'var(--white-color)'}
+                                  value={unit}
+                    />
+                </Form.Item>
+            )
+        }, {
+            title: 'Price',
+            dataIndex: 'unitPrice',
+            render: (unitPrice, record, index) => (
+                <Form.Item name={['unitPrice', index]} rules={[{required: true, message: 'Please input a price'}]}>
+                    <InputControl onChange={(e) => onChangeListData(index, e.target.value, 'unitPrice')}
+                                  minWidth={'100%'}
+                                  width={'20%'}
+                                  bgColor={'var(--white-color)'}
+                                  value={unitPrice}
+                                  type={'number'}
+                    />
+                </Form.Item>
+            )
+        }, {
+            title: 'Amount',
+            dataIndex: 'calculatedPrice',
+            render: (calculatedPrice, record, index) => {
+                console.log("=======",listData)
+                return (
+                    <Form.Item name={['calculatedPrice', index]}>
+                        <Typography className={'min-w-[15rem]'}>
+                            {formatCurrency(parseFloat(listData[index].unitPrice.toString()) * parseFloat(listData[index].quantity.toString()))}
+                        </Typography>
+                    </Form.Item>
+                )
+            }
+        }
+    ];
 
     useEffect(() => {
         dispatch(activeMenu(MENU_ITEM.CREATE_INVOICE))
     }, [dispatch])
 
+    useEffect(() => {
+        if (createSucceeded) {
+            setTimeout(() => {
+                navigate('/invoice');
+            }, 1000)
+        }
+    }, [createSucceeded])
+
     const handleSaveAsDraft = () => {
         dispatch(openWarningAlert({isOpenAlert: true, msgAlert: 'This feature is developing'}))
     }
 
+    const onChangeListData = (index: number, value: any, name: string) => {
+        const temp = listData?.map((s, idx) => {
+            if (idx === index) {
+                return ({...s, [name]: value})
+            } else {
+                return {...s}
+            }
+        })
+        setListData(temp);
+    }
 
     const handleChangeInput = (value: string | number, name: string) => {
         setInvoiceData({...invoiceData, [name]: value})
@@ -94,8 +150,37 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
     }
 
     const onFinish: FormProps<InvoiceModel>['onFinish'] = (values) => {
-        dispatch(createInvoiceItem({values: values}));
-        navigate('/invoice');
+        form.validateFields().then(() => {
+            if (listData.length <= 0) {
+                dispatch(openErrorAlert({isOpenAlert: true, msgAlert: 'Please add an item'}))
+            } else {
+                let error = false;
+                formTable.validateFields().catch(() => {
+                    error = true;
+                    return
+                }).then(async () => {
+                    if (!error) {
+                        const convertInvoiceDate = form.getFieldsValue().invoiceDate.toISOString();
+                        const converDueDate = form.getFieldsValue().dueDate.toISOString();
+                        const tempDetail = form.getFieldsValue();
+                        const invoiceDetail = {
+                            ...tempDetail,
+                            invoiceDate: convertInvoiceDate,
+                            dueDate: converDueDate,
+                        }
+                        const temp = formTable.getFieldsValue();
+                        const invoiceList = Object.keys(temp).reduce((acc: any, key: any) => {
+                            temp[key].forEach((value: any, index: any) => {
+                                if (!acc[index]) acc[index] = {};
+                                acc[index][key] = value;
+                            });
+                            return acc;
+                        }, []);
+                        dispatch(createInvoiceItem({invoiceDetail, list: invoiceList}));
+                    }
+                })
+            }
+        });
     };
 
     const onFinishFailed: FormProps<InvoiceModel>['onFinishFailed'] = (errorInfo) => {
@@ -108,18 +193,20 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
             quantity: 0,
             unit: '',
             unitPrice: 0,
+            calculatedPrice: 0,
         }
         setListData([...listData, newItem]);
     }
-    const handleCancel = () => {
-        setInvoiceData(initInvoiceData);
+
+    const handleSubmit = () => {
+        form.submit();
     }
 
     return (
         <div className={'relative min-h-[100%] pb-20'}>
-            <Form onFinish={onFinish}
-                  onFinishFailed={onFinishFailed}>
-                <Flex gap={'0.5rem'} justify={'space-between'} vertical>
+            <Flex gap={'0.5rem'} justify={'space-between'} vertical>
+                <Form form={form} onFinish={onFinish}
+                      onFinishFailed={onFinishFailed}>
                     <Flex vertical gap={'0.5rem'} className={'bg-white-color rounded-2xl p-8'}>
                         <Row gutter={24}>
                             <Col className="gutter-row" span={8}>
@@ -232,13 +319,15 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
                             </Col>
                         </Row>
                     </Flex>
-                    <Flex vertical gap={'middle'} className={'bg-white-color rounded-2xl p-3'}>
-                        <Flex gap={'middle'} justify={'flex-end'} className={'pr-4'}>
-                            <div>
-                                <ButtonControl text={'Add more item'} onClick={handleAddItem}/>
-                            </div>
-                        </Flex>
-                        <div className={'w-[100%] table-template-wrapper'}>
+                </Form>
+                <Flex vertical gap={'middle'} className={'bg-white-color rounded-2xl p-3'}>
+                    <Flex gap={'middle'} justify={'flex-end'} className={'pr-4'}>
+                        <div>
+                            <ButtonControl text={'Add more item'} onClick={handleAddItem}/>
+                        </div>
+                    </Flex>
+                    <div className={'w-[100%] table-template-wrapper'}>
+                        <Form form={formTable}>
                             <Table
                                 rowKey={'id'}
                                 rowSelection={{
@@ -248,24 +337,25 @@ const CreateInvoice: React.FC<CreateInvoiceProps> = () => {
                                 dataSource={listData}
                                 pagination={false}
                             />
-                        </div>
-                    </Flex>
+                        </Form>
+                    </div>
                 </Flex>
-                <div className={'w-[100%] p-4 absolute bottom-0 bg-white-color shadow-lg rounded-2xl'}>
-                    <Flex gap={'middle'} justify={'flex-end'}>
-                        <div>
-                            <ButtonControl style={{minWidth: '8rem'}} btnType={'gradient-btn'} text={'Save'}
-                                           htmlType={'submit'}/>
-                        </div>
-                        <div>
-                            <ButtonControl text={'Save as draft'} onClick={handleSaveAsDraft}/>
-                        </div>
-                        <div>
-                            <ButtonControl btnType={'no-outline-btn'} text={'Cancel'} onClick={handleCancel}/>
-                        </div>
-                    </Flex>
-                </div>
-            </Form>
+            </Flex>
+            <div className={'w-[100%] p-4 absolute bottom-0 bg-white-color shadow-lg rounded-2xl'}>
+                <Flex gap={'middle'} justify={'flex-end'}>
+                    <div>
+                        <ButtonControl style={{minWidth: '8rem'}} btnType={'gradient-btn'} text={'Save'}
+                                       onClick={handleSubmit}/>
+                    </div>
+                    <div>
+                        <ButtonControl text={'Save as draft'} onClick={handleSaveAsDraft}/>
+                    </div>
+                    <div>
+                        <ButtonControl btnType={'no-outline-btn'} text={'Cancel'} onClick={() => {
+                        }}/>
+                    </div>
+                </Flex>
+            </div>
         </div>
     )
 }

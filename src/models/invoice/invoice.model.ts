@@ -4,9 +4,9 @@ export interface ItemInvoiceModel {
     quantity: number;
     unit: string;
     unitPrice: number;
-    calculatedPrice?: number;
-    createdDate?: string;
-    updatedDate?: string;
+    calculatedPrice: number;
+    createdDate?: Date;
+    updatedDate?: Date;
 }
 
 export interface InvoiceModel {
@@ -44,3 +44,8 @@ export const initInvoiceData: InvoiceModel = {
     invoiceDate: new Date(),
 }
 
+export interface DetailsInvoiceDataModel {
+    userId: string;
+    invoicesID: string;
+    invoiceDetails: {};
+}

@@ -8,9 +8,7 @@ interface PaginationControlProps extends PaginationProps{
 const PaginationControl : React.FC<PaginationControlProps> = () => {
     return(
         <>
-            <Pagination
-                showSizeChanger
-            />
+            <Pagination/>
         </>
     )
 }

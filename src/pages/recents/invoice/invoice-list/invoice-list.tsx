@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {activeMenu, openWarningAlert} from "../../../../redux/slice/layoutSlice";
 import {MENU_ITEM} from "../../../../constants/menu/menu-item.constant";
-import {Col, Flex, Row, Table, TableColumnsType, Typography} from "antd";
+import {Col, Flex, Pagination, Row, Table, TableColumnsType, Typography} from "antd";
 import SelectControl from "../../../../components/select/select";
 import {ItemInvoiceModel} from "../../../../models/invoice/invoice.model";
 import {CONTRACTOR_LIST} from "../../../../mock-data/invoice";
@@ -14,6 +14,7 @@ import {CheckOutlined, DownOutlined} from "@ant-design/icons";
 import {formatDateToDDMMYYYY} from "../../../../utils/format.utils";
 import {ITEM_PER_PAGE_CONSTANT} from "../../../../constants/pagination/pagination.constant";
 import DatePickerControl from "../../../../components/date-picker/date-picker";
+import PaginationControl from "../../../../components/pagination/pagination-control";
 
 type InvoiceListProps = {}
 
@@ -32,7 +33,7 @@ const invoiceListColumns: TableColumnsType<ItemInvoiceModel> = [
     {
         title: 'Invoice ID',
         dataIndex: 'id',
-        render: (_,record) => <Link to={`/invoice-details?id=${record.id}`}>{record.name}</Link>
+        render: (_, record) => <Link to={`/invoice-details?id=${record.id}`}>{record.name}</Link>
     },
     {
         title: 'Billed to',
@@ -84,14 +85,21 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
 
     const [listData, setListData] = useState([]);
     const [selectionItemPerPage, setSelectionItemPerPage] = useState<number>(10);
-
+    const [pageSize, setPageSize] = useState<number>(1);
     const invoice = useSelector((state: any) => state.invoice);
-    const userId = '00001';
 
     useEffect(() => {
         dispatch(activeMenu(MENU_ITEM.INVOICE_LIST))
-        dispatch(getInvoiceList(userId))
     }, [dispatch])
+
+    useEffect(() => {
+        const param = {
+            userId: '00001',
+            pageSize: pageSize,
+            itemPerPage: selectionItemPerPage
+        };
+        dispatch(getInvoiceList(param))
+    }, [pageSize, selectionItemPerPage])
 
     useEffect(() => {
         setListData(invoice.invoiceList);
@@ -99,6 +107,9 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
 
     const handleDeveloping = () => {
         dispatch(openWarningAlert({isOpenAlert: true, msgAlert: 'This feature is developing'}))
+    }
+    const handlePaginationChange = (value: number) => {
+        setPageSize(value);
     }
 
     return (
@@ -143,10 +154,10 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
                                 />
                             </Col>
                             <Col className="gutter-row" flex={1}>
-                                <DatePickerControl suffixIcon={<DownOutlined />} placeholder={'From'}/>
+                                <DatePickerControl suffixIcon={<DownOutlined/>} placeholder={'From'}/>
                             </Col>
                             <Col className="gutter-row" flex={1}>
-                                <DatePickerControl suffixIcon={<DownOutlined />} placeholder={'To'}/>
+                                <DatePickerControl suffixIcon={<DownOutlined/>} placeholder={'To'}/>
                             </Col>
                             <Col className="gutter-row" flex={1}>
                                 <SelectControl placeholder={'All statuses'}
@@ -163,20 +174,26 @@ const InvoiceListPage: React.FC<InvoiceListProps> = () => {
                                 }}
                                 columns={invoiceListColumns}
                                 dataSource={listData}
-                                pagination={false}
                                 loading={invoice.status === 'loading'}
+                                pagination={{
+                                    onChange: handlePaginationChange,
+                                    defaultPageSize: invoice.itemPerPage,
+                                    current: invoice.pageSize,
+                                    position: ['bottomLeft'],
+                                }}
                             />
                         </div>
                     </Flex>
                 </Flex>
                 <div
                     className={'w-[100%] p-2 absolute bottom-0 bg-white-color shadow-lg rounded-lg flex flex-row align-middle'}>
-                    <Typography className={'pl-2 w-16 flex items-center'}>Show:</Typography>
+                    <Typography className={'pl-2 w-16 flex items-center text-dark-blue-color'}>Show:</Typography>
                     <SelectControl value={selectionItemPerPage}
                                    width={'7rem'}
                                    minWidth={'3rem'}
                                    onChange={(value) => setSelectionItemPerPage(value)}
                                    options={ITEM_PER_PAGE_CONSTANT}/>
+                    <Typography className={'pl-2 w-16 flex items-center text-dark-blue-color'}>per page</Typography>
                 </div>
             </div>
         </>

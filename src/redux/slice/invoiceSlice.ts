@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit'
-import {createInvoiceItem, getInvoiceList} from "../actions/invoice/invoice.action";
+import {createInvoiceItem, getInvoiceDetails, getInvoiceList} from "../actions/invoice/invoice.action";
 import {InvoiceModel} from "../../models/invoice/invoice.model";
 
 export interface InvoiceState {
@@ -8,7 +8,9 @@ export interface InvoiceState {
     invoiceList: Array<InvoiceModel>,
     totalPage: number,
     itemPerPage: number,
-    pageSize: number
+    pageSize: number,
+    createSucceeded: boolean,
+    invoiceDetails: object,
 }
 
 const initialState: InvoiceState = {
@@ -17,15 +19,17 @@ const initialState: InvoiceState = {
     invoiceList: [],
     totalPage: 1,
     itemPerPage: 1,
-    pageSize: 1
+    pageSize: 1,
+    createSucceeded: false,
+    invoiceDetails: {}
 }
 
 export const invoiceSlice = createSlice({
     name: 'invoice',
     initialState,
     reducers: {
-        decrement: (state) => {
-            state.value -= 1
+        clearStatus: (state) => {
+            state.status = ''
         },
     },
     extraReducers: builder => {
@@ -35,6 +39,7 @@ export const invoiceSlice = createSlice({
             })
             .addCase(createInvoiceItem.fulfilled, (state: any, action) => {
                 state.status = 'succeeded'
+                state.createSucceeded = !state.createSucceeded
             })
             .addCase(createInvoiceItem.rejected, (state: any, action) => {
                 state.status = 'failed'
@@ -42,7 +47,7 @@ export const invoiceSlice = createSlice({
             .addCase(getInvoiceList.pending, (state: any, action) => {
                 state.status = 'loading'
             })
-            .addCase(getInvoiceList.fulfilled, (state: any, action) => {
+            .addCase(getInvoiceList.fulfilled, (state: any, action:any) => {
                 state.status = 'succeeded'
                 state.invoiceList = action.payload.invoiceList
                 state.totalPage = action.payload.totalPage
@@ -52,8 +57,20 @@ export const invoiceSlice = createSlice({
             .addCase(getInvoiceList.rejected, (state: any, action) => {
                 state.status = 'failed'
             })
+            .addCase(getInvoiceDetails.pending, (state: any, action) => {
+                state.status = 'loading'
+            })
+            .addCase(getInvoiceDetails.fulfilled, (state: any, action:any) => {
+                state.status = 'succeeded'
+                state.invoiceDetails = action.payload
+
+            })
+            .addCase(getInvoiceDetails.rejected, (state: any, action) => {
+                state.status = 'failed'
+            })
     }
 })
+export const {clearStatus} = invoiceSlice.actions
 
 export default invoiceSlice.reducer
 

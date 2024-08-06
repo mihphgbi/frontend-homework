@@ -1,6 +1,6 @@
 export const ITEM_PER_PAGE_CONSTANT= [
+    {value: 5, label: '5 items'},
     {value: 10, label: '10 items'},
-    {value: 30, label: '30 items'},
-    {value: 50, label: '50 items'},
-    {value: 100, label: '100 items'}
+    {value: 15, label: '15 items'},
+    {value: 20, label: '20 items'}
 ]
